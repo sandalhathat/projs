@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    compile group: 'org.json', name: 'json', version: '20200518'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+def peerName = "test"
+def peer = 'localhost:8002'
+def leader = 'localhost:8001'
+def isLeader = false
+
+task arguments {
+    if (project.hasProperty("peerName")) {
+        peerName = project.getProperty("peerName")
+    }
+    if (project.hasProperty("peer")) {
+        peer = project.getProperty("peer")
+    }
+    if (project.hasProperty("leader")) {
+        leader = project.getProperty("leader")
+    }
+    if (project.hasProperty("isLeader")) {
+        isLeader = project.getProperty("isLeader")
+    }
+}
+
+task runPeer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'Peer'
+    standardInput = System.in
+    args peerName
+    args peer
+    args leader
+    args isLeader
+}
